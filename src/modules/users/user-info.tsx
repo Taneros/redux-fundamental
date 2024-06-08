@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { UserId, usersSlice } from "./users.slice";
 import { deleteUser } from "./model/delete-user";
-import {useAppDispatch, useAppSelector} from '../../shared/redux';
+import { useAppDispatch, useAppSelector } from "../../shared/redux";
 
 export function UserInfo() {
   const dispatch = useAppDispatch();

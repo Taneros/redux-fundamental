@@ -1,7 +1,6 @@
 import { createSelector, ThunkAction, UnknownAction } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { extraArgument } from "../app/extra-argument";
-import type { store } from "../app/store";
+import type { store, extraArgument } from "../app/store";
 
 export type AppState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

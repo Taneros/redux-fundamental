@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import {useAppDispatch, useAppSelector} from '../../shared/redux';
 import {
   CounterId,
   selectCounter,
@@ -6,7 +6,6 @@ import {
   decrementAction,
 } from "./counters.slice";
 import { bindActionCreators } from "@reduxjs/toolkit";
-import {useAppSelector} from '../../shared/redux';
 
 export function Counters() {
   return (
@@ -18,7 +17,7 @@ export function Counters() {
 }
 
 export function Counter({ counterId }: { counterId: CounterId }) {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const counterState = useAppSelector((state) =>
     selectCounter(state, counterId),
   );
