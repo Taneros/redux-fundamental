@@ -1,12 +1,15 @@
-import { memo, useMemo, useState } from "react";
-import { User } from "./users.slice";
+import { memo, useMemo } from "react";
+import { User } from "./model/domain";
 import { useNavigate } from "react-router-dom";
-import { usersApi } from "./api";
+import { useAppDispath, useAppSelector } from "../../shared/redux";
+import { usersListSlice } from "./model/users-list.slice";
+import { usersSlice } from "./model/users.slice";
 
 export function UsersList() {
-  const [sortType, setSortType] = useState<"asc" | "desc">("asc");
+  const dispatch = useAppDispath();
 
-  const { data: users, isLoading } = usersApi.useGetUsersQuery();
+  const users = useAppSelector(usersSlice.selectors.usersList);
+  const sortType = useAppSelector(usersListSlice.selectors.sortType);
 
   const sortedUsers = useMemo(() => {
     return [...(users ?? [])].sort((a, b) => {
@@ -18,25 +21,24 @@ export function UsersList() {
     });
   }, [users, sortType]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="flex flex-col items-center">
       <div className="flex flex-col items-center justify-between">
         <div className="flex flex-row items-center">
           <button
-            onClick={() => setSortType("asc")}
+            onClick={() => dispatch(usersListSlice.actions.setSortType("asc"))}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
             Asc
           </button>
           <button
-            onClick={() => setSortType("desc")}
+            onClick={() => dispatch(usersListSlice.actions.setSortType("desc"))}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2"
           >
             Desc
+          </button>
+          <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+            Delete counter users
           </button>
         </div>
         <ul className="list-none">
