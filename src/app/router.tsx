@@ -1,6 +1,4 @@
 import { createBrowserRouter, Link, Outlet, redirect } from "react-router-dom";
-import { Counters } from "../modules/counters";
-import { UserInfo, UsersList, usersApi } from "../modules/users";
 import { store } from "./store";
 
 const loadStore = () =>
@@ -27,29 +25,34 @@ export const router = createBrowserRouter([
       },
       {
         path: "users",
-        element: <UsersList />,
-        loader: () => {
-          loadStore().then(async () => {
-            store.dispatch(usersApi.util.prefetch("getUsers", undefined, {}));
-          });
-          return null;
-        },
+        lazy: () =>
+          import("../modules/users").then((m) => ({
+            Component: m.UsersList,
+            loader: () =>
+              loadStore().then(() => {
+                store.dispatch(m.storeInitialUsersAction());
+                return null;
+              }),
+          })),
       },
       {
         path: "users/:id",
-        element: <UserInfo />,
-        loader: ({ params }) => {
-          loadStore().then(() => {
-            store.dispatch(
-              usersApi.util.prefetch("getUser", params.id ?? "", {})
-            );
-          });
-          return null;
-        },
+        lazy: () =>
+          import("../modules/users").then((m) => ({
+            Component: m.UserInfo,
+            loader: () =>
+              loadStore().then(() => {
+                store.dispatch(m.storeInitialUsersAction());
+                return null;
+              }),
+          })),
       },
       {
         path: "counters",
-        element: <Counters />,
+        lazy: () =>
+          import("../modules/counters").then((m) => ({
+            Component: m.Counters,
+          })),
       },
     ],
   },
