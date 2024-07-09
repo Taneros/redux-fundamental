@@ -3,14 +3,14 @@ import { User } from "./model/domain";
 import { useNavigate } from "react-router-dom";
 import { useAppDispath, useAppSelector } from "../../shared/redux";
 import { usersListSlice } from "./model/users-list.slice";
-import { selectCountersSumm } from "./model/select-counters";
 import { selectSortedUsers } from "./model/select-sorted-users";
 import { deleteCountersUsers } from "./model/delete-counters-users";
+import { selectCounterSum } from "../counters";
 
 export function UsersList() {
   const dispatch = useAppDispath();
 
-  const countersSumm = useAppSelector(selectCountersSumm);
+  const countersSumm = useAppSelector(selectCounterSum);
   const sortedUsers = useAppSelector(selectSortedUsers);
 
   return (

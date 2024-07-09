@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { rootReducer } from "../../shared/redux";
 
 type CounterState = {
   counter: number;
@@ -16,6 +17,13 @@ export const countersSlice = createSlice({
   selectors: {
     selectCounter: (state, counterId) =>
       state[counterId] ?? initialCounterState,
+    countersSum: (counters) =>
+      Math.max(
+        Object.values(counters).reduce((acc, counter) => {
+          return acc + (counter?.counter ?? 0);
+        }, 0),
+        0
+      ),
   },
   reducers: {
     incrementAction: (
@@ -42,4 +50,4 @@ export const countersSlice = createSlice({
       }
     },
   },
-});
+}).injectInto(rootReducer);

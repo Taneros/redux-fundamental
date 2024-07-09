@@ -1,9 +1,7 @@
 import { createBrowserRouter, Link, Outlet, redirect } from "react-router-dom";
-import { UsersList } from "../modules/users/users-list";
-import { Counters } from "../modules/counters/counters";
-import { UserInfo } from "../modules/users/user-info";
+import { Counters } from "../modules/counters";
+import { UserInfo, UsersList, usersApi } from "../modules/users";
 import { store } from "./store";
-import { usersApi } from "../modules/users/api";
 
 const loadStore = () =>
   new Promise((resolve) => {
