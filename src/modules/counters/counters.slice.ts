@@ -29,6 +29,7 @@ export const countersSlice = createSlice({
         state[counterId] = { counter: initialCounterState.counter + 1 };
       }
     },
+    resetCounters: () => initialCountresState,
     decrementAction: (
       state,
       action: PayloadAction<{ counterId: CounterId }>
