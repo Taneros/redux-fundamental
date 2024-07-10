@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.5",
+    "@tanstack/react-query": "^5.50.1",
     "concurrently": "^8.2.2",
     "json-server": "^1.0.0-beta.1",
     "react": "^18.2.0",
