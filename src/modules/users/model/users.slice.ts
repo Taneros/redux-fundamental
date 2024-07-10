@@ -7,15 +7,6 @@ type State = {
   ids: UserId[];
 };
 
-export const initialUsers: User[] = Array.from(
-  { length: 1000 },
-  (_, index) => ({
-    id: `user${index + 11}`,
-    name: `User ${index + 11}`,
-    description: `Description for User ${index + 11}`,
-  })
-);
-
 const initialUsersState: State = {
   entities: {},
   ids: [],
@@ -46,8 +37,8 @@ export const usersSlice = createSlice({
       });
       state.ids = state.ids.filter((id) => !userIds.includes(id));
     },
-    stored: (state) => {
-      const users = initialUsers;
+    stored: (state, action: PayloadAction<{ users: User[] }>) => {
+      const { users } = action.payload;
 
       state.entities = users.reduce((acc, user) => {
         acc[user.id] = user;
