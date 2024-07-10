@@ -1,26 +1,30 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { UserId } from "./model/domain";
-import { useAppDispath, useAppSelector } from "../../shared/redux";
-import { usersSlice } from "./model/users.slice";
+import { useAppDispath } from "../../shared/redux";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getUserQueryOptions } from "./api";
+import { deleteUserThunk } from "./model/delete-user";
 
 export function UserInfo() {
   const dispatch = useAppDispath();
   const navigate = useNavigate();
   const { id } = useParams<{ id: UserId }>();
 
-  const user = useAppSelector((state) =>
-    usersSlice.selectors.userById(state, id ?? "")
-  );
+  const { data: user } = useQuery({
+    ...getUserQueryOptions(id ?? ""),
+    enabled: Boolean(id),
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: async () => {
+      if (!id) {
+        return;
+      }
+      await dispatch(deleteUserThunk(id));
+    },
+  });
 
   const handleBackButtonClick = () => {
-    navigate("..", { relative: "path" });
-  };
-
-  const handleDeleteButtonClick = async () => {
-    if (!id) {
-      return;
-    }
-    dispatch(usersSlice.actions.deleteUser({ userId: id }));
     navigate("..", { relative: "path" });
   };
 
@@ -39,7 +43,8 @@ export function UserInfo() {
       <h2 className="text-3xl">{user.name}</h2>
       <p className="text-xl">{user.description}</p>
       <button
-        onClick={handleDeleteButtonClick}
+        onClick={() => deleteUserMutation.mutate()}
+        disabled={deleteUserMutation.isPending}
         className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
       >
         Delete

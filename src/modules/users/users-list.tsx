@@ -1,17 +1,24 @@
-import { memo } from "react";
-import { User } from "./model/domain";
+import { memo, useMemo } from "react";
+import { sortUsers, User } from "./model/domain";
 import { useNavigate } from "react-router-dom";
 import { useAppDispath, useAppSelector } from "../../shared/redux";
 import { usersListSlice } from "./model/users-list.slice";
-import { selectSortedUsers } from "./model/select-sorted-users";
 import { deleteCountersUsers } from "./model/delete-counters-users";
 import { selectCounterSum } from "../counters";
+import { useQuery } from "@tanstack/react-query";
+import { getUsersQueryOptions } from "./api";
 
 export function UsersList() {
   const dispatch = useAppDispath();
 
+  const { data: users } = useQuery(getUsersQueryOptions());
+  const sortType = useAppSelector(usersListSlice.selectors.sortType);
+
   const countersSumm = useAppSelector(selectCounterSum);
-  const sortedUsers = useAppSelector(selectSortedUsers);
+
+  const sortedUsers = useMemo(() => {
+    return sortUsers(users ?? [], sortType);
+  }, [users, sortType]);
 
   return (
     <div className="flex flex-col items-center">
