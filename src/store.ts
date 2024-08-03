@@ -3,6 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 type CounterState = {
   counter: number;
 };
+
 export type CounterId = string;
 
 type State = {
@@ -68,3 +69,5 @@ const reducer = (state = initialState, action: Action): State => {
 export const store = configureStore({
   reducer: reducer,
 });
+
+export type AppState = ReturnType<typeof store.getState>
