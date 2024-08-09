@@ -1,8 +1,14 @@
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-import {  CounterId, DecrementAction, IncrementAction, selectCounter, useAppSelector } from "./store";
-import { useDispatch} from 'react-redux';
+import {
+  CounterId,
+  DecrementAction,
+  IncrementAction,
+  selectCounter,
+  useAppSelector,
+} from "./store";
+import { useDispatch } from "react-redux";
 
 function App() {
   return (
@@ -17,7 +23,7 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <Counter counterId="first" />
-    <Counter counterId="second" />
+      <Counter counterId="second" />
       <div className="card">
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
@@ -30,10 +36,11 @@ function App() {
   );
 }
 
-
 export function Counter({ counterId }: { counterId: CounterId }) {
-  const dispatch = useDispatch()
-  const counterState = useAppSelector(state => selectCounter(state, counterId))
+  const dispatch = useDispatch();
+  const counterState = useAppSelector((state) =>
+    selectCounter(state, counterId),
+  );
 
   return (
     <>
