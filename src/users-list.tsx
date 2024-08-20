@@ -1,38 +1,30 @@
 import { useState } from "react";
-
-type UserId = string;
-type User = {
-  id: UserId;
-  name: string;
-  description: string;
-};
-
-const users: User[] = Array.from({ length: 3000 }, (_, index) => ({
-  id: `user${index + 11}`,
-  name: `User ${index + 11}`,
-  description: `Description for User ${index + 11}`,
-}));
+import {
+  useAppDispatch,
+  useAppSelector,
+  User,
+  UserRemoveSelectedAction,
+  UserSelectedAction,
+} from "./store";
 
 export function UsersList() {
-  const [selectedUser, setSelectedUser] = useState<User>();
-
   const [sortType, setSortType] = useState<"asc" | "desc">("asc");
 
-  const handleUserClick = (user: User) => {
-    setSelectedUser(user);
-  };
+  const ids = useAppSelector((state) => state.users.ids);
+  const entities = useAppSelector((state) => state.users.entities);
+  const selectedUserId = useAppSelector((state) => state.users.selectedUserId);
 
-  const handleBackButtonClick = () => {
-    setSelectedUser(undefined);
-  };
+  const selectedUser = selectedUserId ? entities[selectedUserId] : undefined;
 
-  const sortedUsers = users.sort((a, b) => {
-    if (sortType === "asc") {
-      return a.name.localeCompare(b.name);
-    } else {
-      return b.name.localeCompare(a.name);
-    }
-  });
+  const sortedUsers = ids
+    .map((id) => entities[id])
+    .sort((a, b) => {
+      if (sortType === "asc") {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
 
   return (
     <div className="flex flex-col items-center">
@@ -54,43 +46,48 @@ export function UsersList() {
           </div>
           <ul className="list-none">
             {sortedUsers.map((user) => (
-              <UserListItem
-                onClick={() => handleUserClick(user)}
-                user={user}
-                key={user.id}
-              />
+              <UserListItem user={user} key={user.id} />
             ))}
           </ul>
         </div>
       ) : (
-        <SelectedUser
-          user={selectedUser}
-          onBackButtonClick={handleBackButtonClick}
-        />
+        <SelectedUser user={selectedUser} />
       )}
     </div>
   );
 }
 
-function UserListItem({ user, onClick }: { user: User; onClick: () => void }) {
+function UserListItem({ user }: { user: User }) {
+  const dispatch = useAppDispatch();
+
+  const handleUserClick = () => {
+    dispatch({
+      type: "userSelected",
+      payload: { userId: user.id },
+    } satisfies UserSelectedAction);
+  };
+
   return (
-    <li key={user.id} className="py-2" onClick={onClick}>
+    <li key={user.id} className="py-2" onClick={handleUserClick}>
       <span className="hover:underline cursor-pointer">{user.name}</span>
     </li>
   );
 }
 
-function SelectedUser({
-  user,
-  onBackButtonClick,
-}: {
-  user: User;
-  onBackButtonClick: () => void;
-}) {
+function SelectedUser({ user }: { user: User }) {
+  const dispatch = useAppDispatch();
+
+  const handleBackButtonClick = () => {
+    dispatch({
+      type: "userRemoveSelected",
+      payload: { userId: user.id },
+    } satisfies UserRemoveSelectedAction);
+  };
+
   return (
     <div className="flex flex-col items-center">
       <button
-        onClick={onBackButtonClick}
+        onClick={handleBackButtonClick}
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded md"
       >
         Back
