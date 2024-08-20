@@ -6,25 +6,16 @@ import {
   UserRemoveSelectedAction,
   UserSelectedAction,
 } from "./store";
+import { selectSelectedUsers, selectSortedUsers } from "./selectors";
 
 export function UsersList() {
   const [sortType, setSortType] = useState<"asc" | "desc">("asc");
 
-  const ids = useAppSelector((state) => state.users.ids);
-  const entities = useAppSelector((state) => state.users.entities);
-  const selectedUserId = useAppSelector((state) => state.users.selectedUserId);
+  const selectedUser = useAppSelector(selectSelectedUsers);
 
-  const selectedUser = selectedUserId ? entities[selectedUserId] : undefined;
-
-  const sortedUsers = ids
-    .map((id) => entities[id])
-    .sort((a, b) => {
-      if (sortType === "asc") {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.name.localeCompare(a.name);
-      }
-    });
+  const sortedUsers = useAppSelector((state) =>
+    selectSortedUsers(state, sortType),
+  );
 
   return (
     <div className="flex flex-col items-center">
