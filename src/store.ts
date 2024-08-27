@@ -1,4 +1,8 @@
-import { configureStore, createSelector } from "@reduxjs/toolkit";
+import {
+  combineReducers,
+  configureStore,
+  createSelector,
+} from "@reduxjs/toolkit";
 import { useDispatch, useSelector, useStore } from "react-redux";
 
 export type UserId = string;
@@ -24,10 +28,12 @@ type CounterState = {
   counter: number;
 };
 
+type CountersState = Record<CounterId, CounterState | undefined>;
+
 export type CounterId = string;
 
 type State = {
-  counters: Record<CounterId, CounterState | undefined>;
+  counters: CountersState;
   users: UserState;
 };
 
@@ -78,55 +84,26 @@ const initialUsersState: UserState = {
   ids: [],
   selectedUserId: undefined,
 };
+
 const initialCounterState: CounterState = { counter: 0 };
 const initialState: State = {
   counters: {},
   users: initialUsersState,
 };
+const initialCountersState: CountersState = {};
 
-const reducer = (state = initialState, action: Action): State => {
+const usersReducer = (state = initialUsersState, action: Action): UserState => {
   switch (action.type) {
-    case "increment": {
-      const { counterId } = action.payload;
-      const currentCounter = state.counters[counterId] ?? initialCounterState;
-      return {
-        ...state,
-        counters: {
-          ...state.counters,
-          [counterId]: {
-            ...currentCounter,
-            counter: currentCounter.counter + 1,
-          },
-        },
-      };
-    }
-    case "decrement": {
-      const { counterId } = action.payload;
-      const currentCounter = state.counters[counterId] ?? initialCounterState;
-      return {
-        ...state,
-        counters: {
-          ...state.counters,
-          [counterId]: {
-            ...currentCounter,
-            counter: currentCounter.counter - 1,
-          },
-        },
-      };
-    }
     case "userStored": {
       const { users } = action.payload;
 
       return {
         ...state,
-        users: {
-          ...state.users,
-          entities: users.reduce<Record<UserId, User>>((acc, user) => {
-            acc[user.id] = user;
-            return acc;
-          }, {}),
-          ids: users.map((user) => user.name),
-        },
+        entities: users.reduce<Record<UserId, User>>((acc, user) => {
+          acc[user.id] = user;
+          return acc;
+        }, {}),
+        ids: users.map((user) => user.name),
       };
     }
 
@@ -134,19 +111,46 @@ const reducer = (state = initialState, action: Action): State => {
       const { userId } = action.payload;
       return {
         ...state,
-        users: {
-          ...state.users,
-          selectedUserId: userId,
-        },
+        selectedUserId: userId,
       };
     }
 
     case "userRemoveSelected": {
       return {
         ...state,
-        users: {
-          ...state.users,
-          selectedUserId: undefined,
+        selectedUserId: undefined,
+      };
+    }
+    default:
+      return state;
+  }
+};
+
+const countersReducer = (
+  state = initialCountersState,
+  action: Action,
+): CountersState => {
+  switch (action.type) {
+    case "increment": {
+      const { counterId } = action.payload;
+      const currentCounter = state[counterId] ?? initialCounterState;
+      return {
+        ...state,
+        [counterId]: {
+          ...currentCounter,
+          counter: currentCounter.counter + 1,
+        },
+      };
+    }
+
+    case "decrement": {
+      const { counterId } = action.payload;
+      const currentCounter = state[counterId] ?? initialCounterState;
+      return {
+        ...state,
+        [counterId]: {
+          ...currentCounter,
+          counter: currentCounter.counter - 1,
         },
       };
     }
@@ -154,6 +158,19 @@ const reducer = (state = initialState, action: Action): State => {
       return state;
   }
 };
+
+// how does combine reducers work?
+// const reducer = (state = initialState, action: Action): State => {
+//   return {
+//     users: usersReducer(state.users, action),
+//     counters: countersReducer(state.counters, action),
+//   }
+// };
+
+const reducer = combineReducers({
+  users: usersReducer,
+  counters: countersReducer,
+});
 
 export const selectCounter = (state: AppState, counterId: CounterId) =>
   state.counters[counterId];
