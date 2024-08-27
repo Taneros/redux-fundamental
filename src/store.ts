@@ -32,11 +32,6 @@ type CountersState = Record<CounterId, CounterState | undefined>;
 
 export type CounterId = string;
 
-type State = {
-  counters: CountersState;
-  users: UserState;
-};
-
 export type UserSelectedAction = {
   type: "userSelected";
   payload: {
@@ -86,10 +81,7 @@ const initialUsersState: UserState = {
 };
 
 const initialCounterState: CounterState = { counter: 0 };
-const initialState: State = {
-  counters: {},
-  users: initialUsersState,
-};
+
 const initialCountersState: CountersState = {};
 
 const usersReducer = (state = initialUsersState, action: Action): UserState => {
@@ -158,14 +150,6 @@ const countersReducer = (
       return state;
   }
 };
-
-// how does combine reducers work?
-// const reducer = (state = initialState, action: Action): State => {
-//   return {
-//     users: usersReducer(state.users, action),
-//     counters: countersReducer(state.counters, action),
-//   }
-// };
 
 const reducer = combineReducers({
   users: usersReducer,
