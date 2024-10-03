@@ -1,8 +1,8 @@
+import { selectCounter } from "./selectors";
 import {
   CounterId,
   DecrementAction,
   IncrementAction,
-  selectCounter,
   useAppSelector,
 } from "./store";
 import { useDispatch } from "react-redux";
@@ -19,7 +19,7 @@ export function Counters() {
 export function Counter({ counterId }: { counterId: CounterId }) {
   const dispatch = useDispatch();
   const counterState = useAppSelector((state) =>
-    selectCounter(state, counterId)
+    selectCounter(state, counterId),
   );
   console.log("render counter", counterId);
 

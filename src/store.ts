@@ -156,9 +156,6 @@ const reducer = combineReducers({
   counters: countersReducer,
 });
 
-export const selectCounter = (state: AppState, counterId: CounterId) =>
-  state.counters[counterId];
-
 export const store = configureStore({
   reducer: reducer,
 });

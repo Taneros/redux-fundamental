@@ -1,4 +1,4 @@
-import { createAppSelector, AppState } from "./store";
+import { createAppSelector, AppState, CounterId } from "./store";
 
 export const selectSortedUsers = createAppSelector(
   (state: AppState) => state.users.ids,
@@ -19,3 +19,6 @@ export const selectSortedUsers = createAppSelector(
 export const selectSelectedUsers = ({
   users: { selectedUserId, entities },
 }: AppState) => (selectedUserId ? entities[selectedUserId] : undefined);
+
+export const selectCounter = (state: AppState, counterId: CounterId) =>
+  state.counters[counterId];
