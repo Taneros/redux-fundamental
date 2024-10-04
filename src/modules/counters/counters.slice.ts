@@ -25,12 +25,10 @@ const initialCounterState: CounterState = { counter: 0 };
 
 const initialCountersState: CountersState = {};
 
-export const countersReducer = (
-  state = initialCountersState,
-  action: Action,
-): CountersState => {
-  switch (action.type) {
-    case "increment": {
+export const countersReducer = createReducer(
+  initialCountersState,
+  (builder) => {
+    builder.addCase(incrementAction, (state, action) => {
       const { counterId } = action.payload;
       const currentCounter = state[counterId] ?? initialCounterState;
       return {
@@ -40,9 +38,8 @@ export const countersReducer = (
           counter: currentCounter.counter + 1,
         },
       };
-    }
-
-    case "decrement": {
+    });
+    builder.addCase(decrementAction, (state, action) => {
       const { counterId } = action.payload;
       const currentCounter = state[counterId] ?? initialCounterState;
       return {
@@ -52,11 +49,9 @@ export const countersReducer = (
           counter: currentCounter.counter - 1,
         },
       };
-    }
-    default:
-      return state;
-  }
-};
+    });
+  },
+);
 
 // циклическая зависимость! как избаваиться? архитекутра redux
 export const selectCounter = (state: AppState, counterId: CounterId) =>
