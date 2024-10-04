@@ -1,21 +1,21 @@
 import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../store";
 import {
-  useAppDispatch,
-  useAppSelector,
+  selectSelectedUsers,
+  selectSortedUsers,
   User,
-  UserRemoveSelectedAction,
   UserSelectedAction,
-} from "./store";
-import { selectSelectedUsers, selectSortedUsers } from "./selectors";
+  UserRemoveSelectedAction,
+} from "./users.slice";
 
 export function UsersList() {
   const [sortType, setSortType] = useState<"asc" | "desc">("asc");
 
-  const selectedUser = useAppSelector(selectSelectedUsers);
-
   const sortedUsers = useAppSelector((state) =>
     selectSortedUsers(state, sortType),
   );
+
+  const selectedUser = useAppSelector(selectSelectedUsers);
 
   return (
     <div className="flex flex-col items-center">

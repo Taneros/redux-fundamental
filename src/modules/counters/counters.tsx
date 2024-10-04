@@ -1,11 +1,11 @@
-import { selectCounter } from "./selectors";
+import { useAppSelector } from "../../store";
+import { useDispatch } from "react-redux";
 import {
   CounterId,
-  DecrementAction,
+  selectCounter,
   IncrementAction,
-  useAppSelector,
-} from "./store";
-import { useDispatch } from "react-redux";
+  DecrementAction,
+} from "./counters.slice";
 
 export function Counters() {
   return (
