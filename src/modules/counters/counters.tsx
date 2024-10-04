@@ -6,6 +6,7 @@ import {
   incrementAction,
   decrementAction,
 } from "./counters.slice";
+import { bindActionCreators } from "@reduxjs/toolkit";
 
 export function Counters() {
   return (
@@ -23,17 +24,22 @@ export function Counter({ counterId }: { counterId: CounterId }) {
   );
   console.log("render counter", counterId);
 
+  const actions = bindActionCreators(
+    { incrementAction, decrementAction },
+    dispatch,
+  );
+
   return (
     <div className="flex flex-row items-center justify-center gap-5 ">
       counter {counterState?.counter}
       <button
-        onClick={() => dispatch(incrementAction({ counterId }))}
+        onClick={() => actions.incrementAction({ counterId })}
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       >
         increment
       </button>
       <button
-        onClick={() => dispatch(decrementAction({ counterId }))}
+        onClick={() => actions.decrementAction({ counterId })}
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       >
         decriment
