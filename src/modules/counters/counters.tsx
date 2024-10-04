@@ -3,8 +3,8 @@ import { useDispatch } from "react-redux";
 import {
   CounterId,
   selectCounter,
-  IncrementAction,
-  DecrementAction,
+  incrementAction,
+  decrementAction,
 } from "./counters.slice";
 
 export function Counters() {
@@ -27,23 +27,13 @@ export function Counter({ counterId }: { counterId: CounterId }) {
     <div className="flex flex-row items-center justify-center gap-5 ">
       counter {counterState?.counter}
       <button
-        onClick={() =>
-          dispatch({
-            type: "increment",
-            payload: { counterId },
-          } satisfies IncrementAction)
-        }
+        onClick={() => dispatch(incrementAction({ counterId }))}
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       >
         increment
       </button>
       <button
-        onClick={() =>
-          dispatch({
-            type: "decrement",
-            payload: { counterId },
-          } satisfies DecrementAction)
-        }
+        onClick={() => dispatch(decrementAction({ counterId }))}
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       >
         decriment

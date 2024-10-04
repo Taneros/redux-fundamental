@@ -1,4 +1,5 @@
-import {AppState} from '../../store';
+import { createAction, createReducer } from "@reduxjs/toolkit";
+import { AppState } from "../../store";
 
 type CounterState = {
   counter: number;
@@ -8,21 +9,17 @@ type CountersState = Record<CounterId, CounterState | undefined>;
 
 export type CounterId = string;
 
-export type IncrementAction = {
-  type: "increment";
-  payload: {
-    counterId: CounterId;
-  };
+createAction;
+createReducer;
+
+type ActionPayload = {
+  counterId: CounterId;
 };
 
-export type DecrementAction = {
-  type: "decrement";
-  payload: {
-    counterId: CounterId;
-  };
-};
-
-type Action = IncrementAction | DecrementAction;
+export const incrementAction =
+  createAction<ActionPayload>("counters/increment");
+export const decrementAction =
+  createAction<ActionPayload>("counters/decrement");
 
 const initialCounterState: CounterState = { counter: 0 };
 
@@ -64,4 +61,3 @@ export const countersReducer = (
 // циклическая зависимость! как избаваиться? архитекутра redux
 export const selectCounter = (state: AppState, counterId: CounterId) =>
   state.counters[counterId];
-
