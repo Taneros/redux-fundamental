@@ -1,25 +1,41 @@
 import { memo, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../store";
+import { useAppDispatch, useAppSelector, useAppStore } from "../../store";
 import { UserId, usersSlice } from "./users.slice";
-import {api} from '../../shared/api';
+import { api } from "../../shared/api";
 
 export function UsersList() {
   const [sortType, setSortType] = useState<"asc" | "desc">("asc");
 
-  const dispatch = useAppDispatch()
+  const store = useAppStore();
 
+  const dispatch = useAppDispatch();
+
+  const isPending = useAppSelector(
+    usersSlice.selectors.selectIsFetchUsersPending,
+  );
+
+  // const isIdle = useAppSelector(usersSlice.selectors.selectIsFetchUsersIdle);
+  // creates stale closure use store directly
+  
   useEffect(() => {
+    const isIdle = usersSlice.selectors.selectIsFetchUsersIdle(
+      store.getState(),
+    );
 
-    dispatch(usersSlice.actions.fetchUsersPending())
-    api.getUsers().then((users) => {
-
-      dispatch(usersSlice.actions.fetchUsersSuccess({users}))
+    if (!isIdle) {
+      return;
     }
 
-    )
-
-  }, [])
-  
+    dispatch(usersSlice.actions.fetchUsersPending());
+    api
+      .getUsers()
+      .then((users) => {
+        dispatch(usersSlice.actions.fetchUsersSuccess({ users }));
+      })
+      .catch(() => {
+        dispatch(usersSlice.actions.fetchUsersFailed());
+      });
+  }, [dispatch, store]);
 
   const sortedUsers = useAppSelector((state) =>
     usersSlice.selectors.selectSortedUsers(state, sortType),
@@ -28,6 +44,10 @@ export function UsersList() {
   const selectedUserId = useAppSelector(
     usersSlice.selectors.selectSelectedUserId,
   );
+
+  if (isPending) {
+    return <>Loading...</>;
+  }
 
   return (
     <div className="flex flex-col items-center">
