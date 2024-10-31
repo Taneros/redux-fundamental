@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector, useAppStore } from "../../store";
 import { UserId, usersSlice } from "./users.slice";
-import { api } from "../../shared/api";
+import { fetchUsers } from "./model/fetchUsers";
 
 export function UsersList() {
   const [sortType, setSortType] = useState<"asc" | "desc">("asc");
@@ -14,27 +14,8 @@ export function UsersList() {
     usersSlice.selectors.selectIsFetchUsersPending,
   );
 
-  // const isIdle = useAppSelector(usersSlice.selectors.selectIsFetchUsersIdle);
-  // creates stale closure use store directly
-  
   useEffect(() => {
-    const isIdle = usersSlice.selectors.selectIsFetchUsersIdle(
-      store.getState(),
-    );
-
-    if (!isIdle) {
-      return;
-    }
-
-    dispatch(usersSlice.actions.fetchUsersPending());
-    api
-      .getUsers()
-      .then((users) => {
-        dispatch(usersSlice.actions.fetchUsersSuccess({ users }));
-      })
-      .catch(() => {
-        dispatch(usersSlice.actions.fetchUsersFailed());
-      });
+    fetchUsers(store.dispatch, store.getState);
   }, [dispatch, store]);
 
   const sortedUsers = useAppSelector((state) =>
