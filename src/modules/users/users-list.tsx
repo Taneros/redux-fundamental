@@ -4,19 +4,19 @@ import { UserId, usersSlice } from "./users.slice";
 import { fetchUsers } from "./model/fetchUsers";
 
 export function UsersList() {
+  const dispatch = useAppDispatch();
+
   const [sortType, setSortType] = useState<"asc" | "desc">("asc");
 
   const store = useAppStore();
-
-  const dispatch = useAppDispatch();
 
   const isPending = useAppSelector(
     usersSlice.selectors.selectIsFetchUsersPending,
   );
 
   useEffect(() => {
-    fetchUsers(store.dispatch, store.getState);
-  }, [dispatch, store]);
+    dispatch(fetchUsers())
+  }, [store]);
 
   const sortedUsers = useAppSelector((state) =>
     usersSlice.selectors.selectSortedUsers(state, sortType),
