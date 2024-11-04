@@ -5,7 +5,7 @@ import {
   UnknownAction,
 } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { initialUsersList, usersSlice } from "./modules/users/users.slice";
+import { usersSlice } from "./modules/users/users.slice";
 import { countersReducer } from "./modules/counters/counters.slice";
 import { api } from "./shared/api";
 
@@ -22,10 +22,6 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: { extraArgument } }),
 });
-
-store.dispatch(
-  usersSlice.actions.fetchUsersSuccess({ users: initialUsersList }),
-);
 
 export type AppState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

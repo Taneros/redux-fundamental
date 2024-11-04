@@ -1,7 +1,7 @@
-import { Link, redirect } from "react-router-dom";
-import { createBrowserRouter, Outlet } from "react-router-dom";
+import { createBrowserRouter, Link, Outlet, redirect } from "react-router-dom";
 import { UsersList } from "./modules/users/users-list";
 import { Counters } from "./modules/counters/counters";
+import { UserInfo } from "./modules/users/user-info";
 
 export const router = createBrowserRouter([
   {
@@ -25,8 +25,8 @@ export const router = createBrowserRouter([
         element: <UsersList />,
       },
       {
-        path: "users/:userId",
-        element: <div>UserId</div>,
+        path: "users/:id",
+        element: <UserInfo />,
       },
       {
         path: "counters",
