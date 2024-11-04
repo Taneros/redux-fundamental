@@ -1,4 +1,3 @@
-import { api } from "../../../shared/api";
 import { AppThunk } from "../../../store";
 import { usersSlice } from "../users.slice";
 
