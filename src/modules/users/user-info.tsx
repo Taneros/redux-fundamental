@@ -1,8 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { UserId, usersSlice } from "./users.slice";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { useEffect } from "react";
-import { fetchUser } from "./model/fetch-user";
 import { deleteUser } from "./model/delete-user";
 
 export function UserInfo() {
@@ -16,20 +14,20 @@ export function UserInfo() {
     usersSlice.selectors.selectIsFetchUserPending,
   );
 
+  const isDeletePending = useAppSelector(
+    usersSlice.selectors.selectIsDeleteUserPending,
+  );
+
   const user = useAppSelector((state) =>
     usersSlice.selectors.selectUserById(state, id),
   );
-
-  useEffect(() => {
-    dispatch(fetchUser(id));
-  }, [dispatch, id]);
 
   const handleBackButtonClick = () => {
     navigate("..", { relative: "path" });
   };
 
   const handleDeleteButtonClick = () => {
-    dispatch(deleteUser(id)).then(() => navigate("..", { relative: "path" }));
+    dispatch(deleteUser(id));
   };
 
   if (isPending || !user) {
