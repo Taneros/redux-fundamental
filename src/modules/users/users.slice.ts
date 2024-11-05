@@ -13,6 +13,7 @@ type UsersState = {
   ids: UserId[];
   fetchUsersStatus: "idle" | "pending" | "success" | "failed";
   fetchUserStatus: "idle" | "pending" | "success" | "failed";
+  deleteUserStatus: "idle" | "pending" | "success" | "failed";
 };
 
 const initialUsersState: UsersState = {
@@ -20,6 +21,7 @@ const initialUsersState: UsersState = {
   ids: [],
   fetchUsersStatus: "idle",
   fetchUserStatus: "idle",
+  deleteUserStatus: "idle",
 };
 
 export const usersSlice = createSlice({
@@ -46,15 +48,16 @@ export const usersSlice = createSlice({
     selectIsFetchUsersPending: (state) => state.fetchUsersStatus === "pending",
     selectIsFetchUsersIdle: (state) => state.fetchUsersStatus === "idle",
     selectIsFetchUserPending: (state) => state.fetchUserStatus === "pending",
+    selectIsDeleteUserPending: (state) => state.fetchUserStatus === "pending",
   },
   reducers: {
     fetchUsersPending: (state) => {
-      state.fetchUsersStatus = 'pending'
+      state.fetchUsersStatus = "pending";
     },
     fetchUsersSuccess: (state, action: PayloadAction<{ users: User[] }>) => {
       const { users } = action.payload;
-      
-      state.fetchUsersStatus = 'success'
+
+      state.fetchUsersStatus = "success";
 
       state.entities = users.reduce(
         (acc, user) => {
@@ -65,20 +68,40 @@ export const usersSlice = createSlice({
       );
       state.ids = users.map((user) => user.id);
     },
+
     fetchUsersFailed: (state) => {
-      state.fetchUsersStatus = 'failed'
+      state.fetchUsersStatus = "failed";
     },
+
     fetchUserPending: (state) => {
       state.fetchUserStatus = "pending";
     },
+
     fetchUserSuccess: (state, action: PayloadAction<{ user: User }>) => {
       const { user } = action.payload;
 
       state.fetchUserStatus = "success";
       state.entities[user.id] = user;
     },
+
     fetchUserFailed: (state) => {
       state.fetchUserStatus = "failed";
+    },
+
+    deleteUserPending: (state) => {
+      state.deleteUserStatus = "pending";
+    },
+
+    deleteUserSuccess: (state, action: PayloadAction<{ userId: UserId }>) => {
+      state.deleteUserStatus = "success";
+
+      delete state.entities[action.payload.userId];
+
+      state.ids = state.ids.filter((id) => id !== action.payload.userId);
+    },
+
+    deleteUserFailed: (state) => {
+      state.deleteUserStatus = "failed";
     },
   },
 });

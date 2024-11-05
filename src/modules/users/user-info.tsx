@@ -3,6 +3,7 @@ import { UserId, usersSlice } from "./users.slice";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { useEffect } from "react";
 import { fetchUser } from "./model/fetch-user";
+import { deleteUser } from "./model/delete-user";
 
 export function UserInfo() {
   const dispatch = useAppDispatch();
@@ -27,6 +28,10 @@ export function UserInfo() {
     navigate("..", { relative: "path" });
   };
 
+  const handleDeleteButtonClick = () => {
+    dispatch(deleteUser(id)).then(() => navigate("..", { relative: "path" }));
+  };
+
   if (isPending || !user) {
     return <div>Loading...</div>;
   }
@@ -41,6 +46,13 @@ export function UserInfo() {
       </button>
       <h2 className="text-3xl">{user.name}</h2>
       <p className="text-xl">{user.description}</p>
+      <button
+        onClick={handleDeleteButtonClick}
+        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        disabled={isDeletePending}
+      >
+        Delete
+      </button>
     </div>
   );
 }
