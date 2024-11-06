@@ -1,4 +1,3 @@
-import { useAppSelector } from "../../store";
 import { useDispatch } from "react-redux";
 import {
   CounterId,
@@ -7,6 +6,7 @@ import {
   decrementAction,
 } from "./counters.slice";
 import { bindActionCreators } from "@reduxjs/toolkit";
+import {useAppSelector} from '../../shared/redux';
 
 export function Counters() {
   return (
