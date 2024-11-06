@@ -17,7 +17,8 @@ export const router = createBrowserRouter([
     element: (
       <div className="container p-5 flex flex-col gap-5">
         <header className="py-5 flex gap-4">
-          <Link to="users">Users</Link>s<Link to="counters">Counters</Link>
+          <Link to="users">Users</Link>
+          <Link to="counters">Counters</Link>
         </header>
         <Outlet />
       </div>
@@ -32,7 +33,11 @@ export const router = createBrowserRouter([
         element: <UsersList />,
         loader: () => {
           loadStore().then(() => {
-            store.dispatch(fetchUsers());
+            store.dispatch(
+              fetchUsers({
+                refetch: false,
+              }),
+            );
           });
 
           return null;

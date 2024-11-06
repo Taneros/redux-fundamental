@@ -9,12 +9,12 @@ export const deleteUser =
 
     try {
       await api.deleteUser(userId);
-      
+
       await router.navigate("/users");
-      
+
       await dispatch(fetchUsers({ refetch: true }));
-      
-      dispatch(usersSlice.actions.deleteUserSuccess({userId}));
+
+      dispatch(usersSlice.actions.deleteUserSuccess({ userId }));
     } catch (error) {
       dispatch(usersSlice.actions.deleteUserFailed());
     }

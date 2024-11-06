@@ -1,24 +1,21 @@
-import { AppThunk } from "../../../shared/redux";
+import { createAppAsyncThunk } from "../../../shared/redux";
 import { usersSlice } from "../users.slice";
 
-export const fetchUsers =
-  ({ refetch }: { refetch: boolean } = { refetch: false }): AppThunk<Promise<void>> =>
-  async (dispatch, getState, { api }) => {
-    const isIdle = usersSlice.selectors.selectIsFetchUsersIdle(getState());
+export const fetchUsers = createAppAsyncThunk(
+  "users/fetchUsers",
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async (_: { refetch: boolean } = { refetch: false }, thunkApi) =>
+    thunkApi.extra.api.getUsers(),
+  {
+    condition({ refetch }, { getState }) {
+      const isPending =
+        usersSlice.selectors.selectIsFetchUsersPending(getState());
 
-    if (!isIdle && !refetch) {
-      return;
-    }
+      if (!refetch && isPending) {
+        return false;
+      }
 
-    dispatch(usersSlice.actions.fetchUsersPending());
-    return api
-      .getUsers()
-      .then((users) => {
-        console.log(`model/fetchUsers.ts - line: 17 ->> users`, users);
-        dispatch(usersSlice.actions.fetchUsersSuccess({ users }));
-        dispatch(usersSlice.actions.fetchUsersSuccess({ users }));
-      })
-      .catch(() => {
-        dispatch(usersSlice.actions.fetchUsersFailed());
-      });
-  };
+      return true;
+    },
+  },
+);
