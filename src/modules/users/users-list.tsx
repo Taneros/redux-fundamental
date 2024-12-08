@@ -1,20 +1,27 @@
-import { memo, useState } from "react";
-import { UserId, usersSlice } from "./users.slice";
+import { memo, useMemo, useState } from "react";
+import { User } from "./users.slice";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../shared/redux";
+import { usersApi } from "./api";
 
 export function UsersList() {
   const [sortType, setSortType] = useState<"asc" | "desc">("asc");
 
-  const isPending = useAppSelector(
-    usersSlice.selectors.selectIsFetchUsersPending,
+  const { isLoading, data: users } = usersApi.useGetUsersQuery();
+
+
+  const sortedUsers = useMemo(
+    () =>
+      [...(users ?? [])].sort((a, b) => {
+        if (sortType === "asc") {
+          return a.name.localeCompare(b.name);
+        } else {
+          return b.name.localeCompare(a.name);
+        }
+      }),
+    [users, sortType],
   );
 
-  const sortedUsers = useAppSelector((state) =>
-    usersSlice.selectors.selectSortedUsers(state, sortType),
-  );
-
-  if (isPending) {
+  if (isLoading) {
     return <>Loading...</>;
   }
 
@@ -37,7 +44,7 @@ export function UsersList() {
         </div>
         <ul className="list-none">
           {sortedUsers.map((user) => (
-            <UserListItem userId={user.id} key={user.id} />
+            <UserListItem user={user} key={user.id} />
           ))}
         </ul>
       </div>
@@ -46,16 +53,15 @@ export function UsersList() {
 }
 
 const UserListItem = memo(function UserListItem({
-  userId,
+  user,
 }: {
-  userId: UserId;
+  user: User;
 }) {
   const navigate = useNavigate();
 
-  const user = useAppSelector((state) => state.users.entities[userId]);
 
   const handleUserClick = () => {
-    navigate(userId, { relative: "path" });
+    navigate(user.id, { relative: "path" });
   };
 
   if (!user) {

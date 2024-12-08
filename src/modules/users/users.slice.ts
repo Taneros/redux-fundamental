@@ -59,7 +59,7 @@ export const usersSlice = createSlice({
     fetchUserSuccess: (state, action: PayloadAction<{ user: User }>) => {
       const { user } = action.payload;
 
-      state.fetchUserStatus = "success";
+      state.fetchUserStatus = "success"; 
       state.entities[user.id] = user;
     },
 

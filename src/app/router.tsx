@@ -2,9 +2,7 @@ import { createBrowserRouter, Link, Outlet, redirect } from "react-router-dom";
 import { UsersList } from "../modules/users/users-list";
 import { Counters } from "../modules/counters/counters";
 import { UserInfo } from "../modules/users/user-info";
-import { fetchUser } from "../modules/users/model/fetch-user";
 import { store } from "./store";
-import { fetchUsers } from "../modules/users/model/fetchUsers";
 
 const loadStore = () =>
   new Promise((resolve) => {
@@ -32,13 +30,7 @@ export const router = createBrowserRouter([
         path: "users",
         element: <UsersList />,
         loader: () => {
-          loadStore().then(() => {
-            store.dispatch(
-              fetchUsers({
-                refetch: false,
-              }),
-            );
-          });
+          loadStore().then(() => {});
 
           return null;
         },
@@ -47,9 +39,7 @@ export const router = createBrowserRouter([
         path: "users/:id",
         element: <UserInfo />,
         loader: ({ params }) => {
-          loadStore().then(() => {
-            store.dispatch(fetchUser(params?.id ?? ""));
-          });
+          loadStore().then(() => {});
 
           return null;
         },
