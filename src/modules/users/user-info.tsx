@@ -3,8 +3,12 @@ import { UserId } from "./users.slice";
 import { usersApi } from "./api";
 import { skipToken } from "@reduxjs/toolkit/query";
 import {useRef} from 'react';
+import {useAppDispatch, useAppSelector} from '../../shared/redux';
+import {deleteUser} from './model/delete-user';
 
 export function UserInfo() {
+  const dispatch = useAppDispatch()
+  
   const navigate = useNavigate();
   const {id} = useParams<{id: UserId;}>();
   
@@ -14,8 +18,7 @@ export function UserInfo() {
     isDeleted.current || !id ? skipToken : id,
   );
 
-  const [deleteUser, { isLoading: isLoadingDeleteUser }] =
-    usersApi.useDeleteUserMutation();
+  const {isLoading: isLoadingDeleteUser, } = useAppSelector(usersApi.endpoints.deleteUser.select(id ?? skipToken))
 
   const handleBackButtonClick = () => {
     navigate("..", { relative: "path" });
@@ -29,7 +32,7 @@ export function UserInfo() {
     isDeleted.current = true;
     
     try {
-      await deleteUser(id);
+      await dispatch(deleteUser(id));
       
       navigate("..", { relative: "path" });
     } catch (error) {

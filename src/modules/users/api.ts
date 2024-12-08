@@ -8,32 +8,26 @@ const UserDtoSchema = z.object({
   description: z.string(),
 });
 
-
 export const usersApi = baseApi.injectEndpoints({
   endpoints: (create) => ({
     getUsers: create.query<User[], void>({
       query: () => "/users",
-      providesTags: [{ type: "Users", id: "LIST" }],
+      providesTags: ["Users", {type: 'Users', id: 'LIST'}],
       transformResponse: (res: unknown) => UserDtoSchema.array().parse(res),
     }),
     getUser: create.query<User, UserId>({
       query: (userId) => `/users/${userId}`,
-      providesTags: (result, error, userId) => [{type: "Users", id: userId}],
-      transformResponse: (res: unknown) => UserDtoSchema.parse(res)
+      providesTags: ['Users'],
+      transformResponse: (res: unknown) => UserDtoSchema.parse(res),
     }),
     deleteUser: create.mutation<void, UserId>({
       query: (userId) => ({
         method: "DELETE",
         url: `/users/${userId}`,
       }),
-      invalidatesTags: (result, error, userId) => [
-        { type: "Users", id: userId },
-        { type: "Users", id: "LIST" },
-      ],
     }),
   }),
   overrideExisting: true,
 });
-
 
 // export const { useGetUsersQuery } = usersApi;
