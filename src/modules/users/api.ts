@@ -1,24 +1,39 @@
 import { baseApi } from "../../shared/api";
 import { User, UserId } from "./users.slice";
 
+import { z } from "zod";
+const UserDtoSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+});
+
+
 export const usersApi = baseApi.injectEndpoints({
   endpoints: (create) => ({
     getUsers: create.query<User[], void>({
       query: () => "/users",
-      providesTags: ['Users']
+      providesTags: [{ type: "Users", id: "LIST" }],
+      transformResponse: (res: unknown) => UserDtoSchema.array().parse(res),
     }),
     getUser: create.query<User, UserId>({
       query: (userId) => `/users/${userId}`,
-      providesTags: ['Users']
+      providesTags: (result, error, userId) => [{type: "Users", id: userId}],
+      transformResponse: (res: unknown) => UserDtoSchema.parse(res)
     }),
     deleteUser: create.mutation<void, UserId>({
       query: (userId) => ({
-        method: 'DELETE', url: `/users/${userId}`
+        method: "DELETE",
+        url: `/users/${userId}`,
       }),
-      invalidatesTags: ['Users']
-    })
+      invalidatesTags: (result, error, userId) => [
+        { type: "Users", id: userId },
+        { type: "Users", id: "LIST" },
+      ],
+    }),
   }),
   overrideExisting: true,
 });
+
 
 // export const { useGetUsersQuery } = usersApi;

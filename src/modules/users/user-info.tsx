@@ -2,31 +2,41 @@ import { useNavigate, useParams } from "react-router-dom";
 import { UserId } from "./users.slice";
 import { usersApi } from "./api";
 import { skipToken } from "@reduxjs/toolkit/query";
+import {useRef} from 'react';
 
 export function UserInfo() {
   const navigate = useNavigate();
+  const {id} = useParams<{id: UserId;}>();
+  
+  const isDeleted = useRef(false)
 
-  const { id } = useParams<{ id: UserId }>();
+  const { isLoading, data: user } = usersApi.useGetUserQuery(
+    isDeleted.current || !id ? skipToken : id,
+  );
 
-  const { isLoading, data: user } = usersApi.useGetUserQuery(id ?? skipToken);
-
-  const [deleteUser, { isLoading: isLoadingDeleteUser}] = usersApi.useDeleteUserMutation();
+  const [deleteUser, { isLoading: isLoadingDeleteUser }] =
+    usersApi.useDeleteUserMutation();
 
   const handleBackButtonClick = () => {
     navigate("..", { relative: "path" });
   };
-  
+
   const handleDeleteButtonClick = async () => {
-    if(!id) {
-      return
+    if (!id) {
+      return;
     }
     
+    isDeleted.current = true;
     
-    await deleteUser(id)
-    
-    navigate("..", {relative: "path"});
-    
-  }
+    try {
+      await deleteUser(id);
+      
+      navigate("..", { relative: "path" });
+    } catch (error) {
+      isDeleted.current = false;
+      
+    } 
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
