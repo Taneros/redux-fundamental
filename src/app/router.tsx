@@ -3,9 +3,9 @@ import { UsersList } from "../modules/users/users-list";
 import { Counters } from "../modules/counters/counters";
 import { UserInfo } from "../modules/users/user-info";
 import { store } from "./store";
-import {usersApi} from '../modules/users/api';
+import { usersApi } from "../modules/users/api";
 
-const loadStore = () =>
+const loadStore = (): Promise<typeof store> =>
   new Promise((resolve) => {
     setTimeout(() => resolve(store), 0);
   });
@@ -20,6 +20,8 @@ export const router = createBrowserRouter([
           <Link to="counters">Counters</Link>
         </header>
         <Outlet />
+
+
       </div>
     ),
     children: [
@@ -30,21 +32,28 @@ export const router = createBrowserRouter([
       {
         path: "users",
         element: <UsersList />,
-        loader: () => {
-          loadStore().then(async () => {
-            store.dispatch(usersApi.util.prefetch('getUsers', undefined, {}))
-          });
+        loader: async () => {
+          try {
+            await loadStore();
+            store.dispatch(usersApi.util.prefetch("getUsers", undefined, {}));
+          } catch (error) {
+            console.error("Failed to load users:", error);
+          }
           return null;
         },
       },
       {
         path: "users/:id",
         element: <UserInfo />,
-        loader: ({ params }) => {
-          loadStore().then(() => {
-            store.dispatch(usersApi.util.prefetch('getUser', params.id ?? '', {}))
-          });
-
+        loader: async ({ params }) => {
+          try {
+            await loadStore();
+            store.dispatch(
+              usersApi.util.prefetch("getUser", params.id ?? "", {}),
+            );
+          } catch (error) {
+            console.error("Failed to load user:", error);
+          }
           return null;
         },
       },
