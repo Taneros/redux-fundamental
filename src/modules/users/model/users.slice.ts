@@ -2,6 +2,8 @@ import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User, UserId } from "./domain";
 import { rootReducer } from '../../../shared/redux';
 
+console.trace('users.slice.ts');
+
 type State = {
   entities: Record<UserId, User | undefined>;
   ids: UserId[];
@@ -43,8 +45,8 @@ export const usersSlice = createSlice({
       });
       state.ids = state.ids.filter((id) => !userIds.includes(id));
     },
-    stored: (state, action: PayloadAction<{ users: User[] }>) => {
-      const { users } = action.payload;
+    stored: (state) => {
+      const users = initialUsers;
 
       state.entities = users.reduce(
         (acc, user) => {

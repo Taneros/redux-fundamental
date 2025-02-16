@@ -1,16 +1,14 @@
-import { createBrowserRouter, Link, Outlet, redirect } from "react-router-dom";
-import { UsersList, UserInfo, usersApi } from '../modules/users';
-import { Counters } from '../modules/counters';
+import { createBrowserRouter, Link, Outlet, redirect } from 'react-router-dom';
 import { store } from './store';
 
-const loadStore = () =>
+const loadStore = (): Promise<typeof store> =>
   new Promise((resolve) => {
     setTimeout(() => resolve(store), 0);
   });
 
 export const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: (
       <div className="container p-5 flex flex-col gap-5">
         <header className="py-5 flex gap-4">
@@ -23,33 +21,38 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        loader: () => redirect("/users"),
+        loader: () => redirect('/users'),
       },
       {
-        path: "users",
-        element: <UsersList />,
-        loader: () => {
-          loadStore().then(async () => {
-            store.dispatch(usersApi.util.prefetch("getUsers", undefined, {}));
-          });
-          return null;
-        },
+        path: 'users',
+        lazy: () =>
+          import('../modules/users').then((module) => ({
+            Component: module.UsersList,
+            loader: () => {
+              loadStore().then((store) => {
+                store.dispatch(module.storeInitialUsersAction());
+              });
+              return null;
+            },
+          })),
       },
       {
-        path: "users/:id",
-        element: <UserInfo />,
-        loader: ({ params }) => {
-          loadStore().then(() => {
-            store.dispatch(
-              usersApi.util.prefetch("getUser", params.id ?? "", {})
-            );
-          });
-          return null;
-        },
+        path: 'users/:id',
+        lazy: () =>
+          import('../modules/users').then((module) => ({
+            Component: module.UserInfo,
+            loader: () => {
+              loadStore().then((store) => {
+                store.dispatch(module.storeInitialUsersAction());
+              });
+
+              return null;
+            },
+          })),
       },
       {
-        path: "counters",
-        element: <Counters />,
+        path: 'counters',
+        lazy: () => import('../modules/counters').then((module) => ({ Component: module.Counters })),
       },
     ],
   },
