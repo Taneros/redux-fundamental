@@ -3,14 +3,14 @@ import { User } from './model/domain';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispath, useAppSelector } from '../../shared/redux';
 import { usersListSlice } from './model/users-list.slice';
-import { selectCountersSum } from './model/select-counters';
 import { selectSortedUsers } from './model/select-sorted-users';
-import {deleteCountersUsers} from './model/delete-counters-users';
+import { deleteCountersUsers } from './model/delete-counters-users';
+import { selectCountersSum } from '../counters';
 
 export function UsersList() {
   const dispatch = useAppDispath();
 
-  const coutersSum = useAppSelector(selectCountersSum);
+  const countersSum = useAppSelector(selectCountersSum);
 
   const sortedUsers = useAppSelector(selectSortedUsers);
 
@@ -30,12 +30,12 @@ export function UsersList() {
           >
             Desc
           </button>
-          {coutersSum !== 0 && (
-            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          {countersSum !== 0 && (
+            <button
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
               onClick={() => dispatch(deleteCountersUsers())}
-
             >
-              Delete counter users {coutersSum}
+              Delete counter users {countersSum}
             </button>
           )}
         </div>

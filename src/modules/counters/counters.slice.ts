@@ -1,4 +1,5 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { rootReducer } from '../../shared/redux';
 
 type CounterState = {
   counter: number;
@@ -11,17 +12,18 @@ const initialCounterState: CounterState = { counter: 0 };
 const initialCountresState: CountersState = {};
 
 export const countersSlice = createSlice({
-  name: "counters",
+  name: 'counters',
   initialState: initialCountresState,
   selectors: {
-    selectCounter: (state, counterId) =>
-      state[counterId] ?? initialCounterState,
+    selectCounter: (state, counterId) => state[counterId] ?? initialCounterState,
+    countersSum: (counters) => {
+      const total = Object.values(counters).reduce((acc, counter) => acc + (counter?.counter ?? 0), 0);
+      return Math.max(total, 0);
+    },
   },
   reducers: {
-    incrementAction: (
-      state,
-      action: PayloadAction<{ counterId: CounterId }>
-    ) => {
+    resetCounters: () => initialCountresState,
+    incrementAction: (state, action: PayloadAction<{ counterId: CounterId }>) => {
       const { counterId } = action.payload;
       if (state[counterId]) {
         state[counterId]!.counter++;
@@ -29,10 +31,7 @@ export const countersSlice = createSlice({
         state[counterId] = { counter: initialCounterState.counter + 1 };
       }
     },
-    decrementAction: (
-      state,
-      action: PayloadAction<{ counterId: CounterId }>
-    ) => {
+    decrementAction: (state, action: PayloadAction<{ counterId: CounterId }>) => {
       const { counterId } = action.payload;
       if (state[counterId]) {
         state[counterId]!.counter--;
@@ -41,4 +40,4 @@ export const countersSlice = createSlice({
       }
     },
   },
-});
+}).injectInto(rootReducer);

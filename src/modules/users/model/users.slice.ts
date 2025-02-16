@@ -1,19 +1,17 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User, UserId } from "./domain";
+import { rootReducer } from '../../../shared/redux';
 
 type State = {
   entities: Record<UserId, User | undefined>;
   ids: UserId[];
 };
 
-export const initialUsers: User[] = Array.from(
-  { length: 1000 },
-  (_, index) => ({
-    id: `user${index + 11}`,
-    name: `User ${index + 11}`,
-    description: `Description for User ${index + 11}`,
-  })
-);
+export const initialUsers: User[] = Array.from({ length: 1000 }, (_, index) => ({
+  id: `user${index + 11}`,
+  name: `User ${index + 11}`,
+  description: `Description for User ${index + 11}`,
+}));
 
 const initialUsersState: State = {
   entities: {},
@@ -58,7 +56,7 @@ export const usersSlice = createSlice({
       state.ids = users.map((user) => user.id);
     },
   },
-});
+}).injectInto(rootReducer);
 
 // todo
 // refactor this project using entity adapter from reduc toolkit

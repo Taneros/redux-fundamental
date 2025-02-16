@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { rootReducer } from '../../../shared/redux';
 
 export type SortType = "asc" | "desc";
 type State = {
@@ -10,7 +11,7 @@ const initialState: State = {
 };
 
 export const usersListSlice = createSlice({
-  name: "users-list",
+  name: 'users-list',
   initialState: initialState,
   selectors: {
     sortType: (state) => state.sortType,
@@ -20,4 +21,4 @@ export const usersListSlice = createSlice({
       state.sortType = action.payload;
     },
   },
-});
+}).injectInto(rootReducer);

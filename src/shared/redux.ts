@@ -1,22 +1,22 @@
 import {
   asyncThunkCreator,
   buildCreateSlice,
+  combineSlices,
   createAsyncThunk,
   createSelector,
   ThunkAction,
   UnknownAction,
-} from "@reduxjs/toolkit";
-import { useDispatch, useSelector, useStore } from "react-redux";
-import type { store, extraArgument } from "../app/store";
+} from '@reduxjs/toolkit';
+import { useDispatch, useSelector, useStore } from 'react-redux';
+import type { store, extraArgument } from '../app/store';
+import { baseApi } from './api';
 
-export type AppState = ReturnType<typeof store.getState>;
+export const rootReducer = combineSlices(baseApi);
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export type AppState = any;
 export type AppDispatch = typeof store.dispatch;
-export type AppThunk<R = void> = ThunkAction<
-  R,
-  AppState,
-  typeof extraArgument,
-  UnknownAction
->;
+export type AppThunk<R = void> = ThunkAction<R, AppState, typeof extraArgument, UnknownAction>;
 
 export const useAppSelector = useSelector.withTypes<AppState>();
 export const useAppDispath = useDispatch.withTypes<AppDispatch>();
