@@ -1,27 +1,29 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { UserId } from "./model/domain";
-import { useAppDispath, useAppSelector } from "../../shared/redux";
-import { usersSlice } from "./model/users.slice";
+import { useAppDispath } from '../../shared/redux';
+import { useQuery } from '@tanstack/react-query';
+import { getUserQueryOptions } from './api';
+import { deleteUserConfirmationThunk } from './model/delete-user';
 
 export function UserInfo() {
   const dispatch = useAppDispath();
   const navigate = useNavigate();
   const { id } = useParams<{ id: UserId }>();
 
-  const user = useAppSelector((state) =>
-    usersSlice.selectors.userById(state, id ?? "")
-  );
+  const { data: user } = useQuery({
+    ...getUserQueryOptions(id ?? ''),
+    enabled: !!id,
+  });
 
   const handleBackButtonClick = () => {
-    navigate("..", { relative: "path" });
+    navigate('..', { relative: 'path' });
   };
 
   const handleDeleteButtonClick = async () => {
     if (!id) {
       return;
     }
-    dispatch(usersSlice.actions.deleteUser({ userId: id }));
-    navigate("..", { relative: "path" });
+    dispatch(deleteUserConfirmationThunk(id));
   };
 
   if (!user) {

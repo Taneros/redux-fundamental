@@ -9,11 +9,13 @@ const UserDtoSchema = z.object({
   description: z.string(),
 });
 
+export const usersBaseKey = ['user'];
+
 export const getUsersQueryOptions = () => {
   return queryOptions({
-    queryKey: ["user", "list"],
-    queryFn: () =>
-      baseFetch("users").then((res) => UserDtoSchema.array().parse(res)),
+    queryKey: ['user', 'list'],
+    queryFn: () => baseFetch('users').then((res) => UserDtoSchema.array().parse(res)),
+    staleTime: 1000 * 60 * 5,
   });
 };
 

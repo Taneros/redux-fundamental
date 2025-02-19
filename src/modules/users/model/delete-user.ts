@@ -1,16 +1,28 @@
-import { AppThunk } from "../../../shared/redux";
-import { UserId } from "./domain";
+import { AppThunk } from '../../../shared/redux';
+import { deleteUser, usersBaseKey } from '../api';
+import { UserId } from './domain';
+import { queryClient } from '../../../shared/api';
 
-export const deleteUser =
+export const deleteUserThunk =
   (userId: UserId): AppThunk<Promise<void>> =>
-  async (dispatch, _, { router }) => {
-    // await dispatch(usersApi.endpoints.deleteUser.initiate(userId)).unwrap();
+  async (_dispatch, _, { router }) => {
+    await queryClient.cancelQueries({ queryKey: [...usersBaseKey, userId] });
 
-    await router.navigate("/users");
+    await deleteUser(userId);
 
-    /*
-    await dispatch(
-      usersApi.util.invalidateTags([{ type: "Users", id: "LIST" }])
-    );
-    */
+    await queryClient.invalidateQueries({
+      queryKey: [...usersBaseKey, 'list'],
+      exact: true,
+    });
+
+    await router.navigate('/users');
+  };
+
+export const deleteUserConfirmationThunk =
+  (userId: UserId): AppThunk<Promise<void>> =>
+  async (dispatch) => {
+    const confirmed = window.confirm('Are you sure you want to delete this user?');
+    if (confirmed) {
+      await dispatch(deleteUserThunk(userId));
+    }
   };
